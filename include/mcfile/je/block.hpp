@@ -78,7 +78,9 @@ public:
     std::shared_ptr<nbt::CompoundTag> toCompoundTag() const {
         using namespace std;
         auto root = make_shared<nbt::CompoundTag>();
-        root->set(u8"Name", make_shared<nbt::StringTag>(name()));
+        // 26.3 renamed the block palette keys to id/properties.
+        bool modern = fDataVersion >= 5023;
+        root->set(modern ? u8"id" : u8"Name", make_shared<nbt::StringTag>(name()));
         if (!fData.empty()) {
             assert(fData.front() == u8'[' && fData.back() == u8']');
             auto properties = make_shared<nbt::CompoundTag>();
@@ -97,7 +99,7 @@ public:
                 properties->set(u8string(key.data(), key.size()), make_shared<nbt::StringTag>(u8string(value)));
                 off = to + 1;
             }
-            root->set(u8"Properties", properties);
+            root->set(modern ? u8"properties" : u8"Properties", properties);
         }
         return root;
     }
@@ -132,10 +134,16 @@ public:
         using namespace std;
         auto name = tag.string(u8"Name");
         if (!name) {
+            name = tag.string(u8"id");
+        }
+        if (!name) {
             return nullptr;
         }
         auto id = blocks::FromName(*name, dataVersion);
         auto properties = tag.compoundTag(u8"Properties");
+        if (!properties) {
+            properties = tag.compoundTag(u8"properties");
+        }
         u8string data;
         if (properties) {
             for (auto p : properties->fValue) {

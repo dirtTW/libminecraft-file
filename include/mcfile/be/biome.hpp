@@ -198,6 +198,9 @@ public:
         case mangrove_swamp: return 191;
         case cherry_grove: return 192;
         case pale_garden: return 193;
+        // Bedrock 26.30 added sulfur caves (194); 26.50 added dappled forest (195).
+        case sulfur_caves: return 194;
+        case dappled_forest: return 195;
         default:
             return 0;
         }

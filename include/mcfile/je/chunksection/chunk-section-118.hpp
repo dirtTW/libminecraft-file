@@ -54,16 +54,32 @@ public:
                 return nullptr;
             }
             for (auto entry : *blockPaletteTag) {
-                auto tag = entry->asCompound();
-                if (!tag) {
-                    return nullptr;
-                }
-                auto name = tag->string(u8"Name");
-                if (!name) {
+                // Palette entry layout:
+                //   up to 26.2    { Name: <id>, Properties: { ... } }
+                //   26.3 (snap7)  { id: <id>, properties: { ... } }
+                // In 26.3 the properties may be elided for the default block state, the
+                // block resource location may be carried under an empty key, and the whole
+                // palette may be a list of strings rather than a list of compounds.
+                u8string name;
+                shared_ptr<nbt::CompoundTag> propertiesTag;
+                if (auto tag = entry->asCompound(); tag) {
+                    if (auto n = tag->string(u8"Name"); n) {
+                        name = *n;
+                        propertiesTag = tag->compoundTag(u8"Properties");
+                    } else if (auto n = tag->string(u8"id"); n) {
+                        name = *n;
+                        propertiesTag = tag->compoundTag(u8"properties");
+                    } else if (auto n = tag->string(u8""); n) {
+                        name = *n;
+                    } else {
+                        return nullptr;
+                    }
+                } else if (auto s = entry->asString(); s) {
+                    name = s->fValue;
+                } else {
                     return nullptr;
                 }
                 map<u8string, u8string> properties;
-                auto propertiesTag = tag->compoundTag(u8"Properties");
                 if (propertiesTag) {
                     for (auto p : *propertiesTag) {
                         u8string n = p.first;
@@ -77,7 +93,7 @@ public:
                         properties.insert(make_pair(n, v->fValue));
                     }
                 }
-                blockPalette.push_back(Block::FromNameAndProperties(*name, dataVersion, properties));
+                blockPalette.push_back(Block::FromNameAndProperties(name, dataVersion, properties));
             }
             if (blockPalette.empty()) {
                 return nullptr;
@@ -109,7 +125,10 @@ public:
                 }
                 auto b = biomes::Biome::FromName(tag->fValue);
                 if (!b) {
-                    return nullptr;
+                    // A biome added after this library was written must not cost the whole
+                    // section: the block palette is still valid, so keep the section and
+                    // fall back to a neutral biome instead of dropping everything.
+                    b = biomes::minecraft::plains;
                 }
                 biomePalette.push_back(*b);
             }

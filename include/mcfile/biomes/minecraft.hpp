@@ -109,6 +109,12 @@ enum : BiomeId {
     // 1.21.4
     pale_garden,
 
+    // 26.2
+    sulfur_caves,
+
+    // 26.3
+    dappled_forest,
+
     minecraft_max_biome_id
 
     // Functions need to update when new biomes will be released:

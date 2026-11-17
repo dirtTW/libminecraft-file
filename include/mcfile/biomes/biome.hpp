@@ -608,6 +608,10 @@ public:
                 // 24w40a or later
                 return ns(u8"pale_garden");
             }
+        case sulfur_caves:
+            return ns(u8"sulfur_caves");
+        case dappled_forest:
+            return ns(u8"dappled_forest");
         }
 #if !defined(NDEBUG)
         special = false;
@@ -746,6 +750,12 @@ public:
 
             // 1.21.2
             {u8"minecraft:pale_garden", minecraft::pale_garden},
+
+            // 26.2
+            {u8"minecraft:sulfur_caves", minecraft::sulfur_caves},
+
+            // 26.3
+            {u8"minecraft:dappled_forest", minecraft::dappled_forest},
         };
         auto found = sMapping.find(name);
         if (found == sMapping.end()) {
