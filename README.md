@@ -81,6 +81,14 @@ the writer and reader use the same palette shape.
 - Upstream status: no tags, so pin a commit hash. The 26.x and block-table changes are not
   upstream yet; PR #3 is open upstream and is included here.
 
+## Integration status
+
+The current consumer, [dirtTW/je2be-core](https://github.com/dirtTW/je2be-core), pins this
+fork at `f45bcee`. Recent 26.3 fixes in that consumer — `initialize_light` chunk conversion,
+legacy entity id normalization, sign/name handling, and block-entity audit fixes — did not
+require header changes here. If this library changes, update the CPM `GIT_TAG` in
+`je2be-core/CMakeLists.txt` instead of tracking `master`.
+
 ## Using it
 
 With CPM:
