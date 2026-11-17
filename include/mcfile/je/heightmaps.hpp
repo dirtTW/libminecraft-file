@@ -1105,6 +1105,7 @@ public:
     case yellow_poplar_leaves:
     case yellow_wool_slab:
     case yellow_wool_stairs:
+            return true;
         default:
             return false;
         }
@@ -2149,6 +2150,7 @@ public:
     case yellow_concrete_stairs:
     case yellow_wool_slab:
     case yellow_wool_stairs:
+            return true;
         default:
             return false;
         }
@@ -3185,6 +3187,7 @@ public:
     case yellow_poplar_leaves:
     case yellow_wool_slab:
     case yellow_wool_stairs:
+            return true;
         default:
             return false;
         }
@@ -4470,6 +4473,7 @@ public:
     case yellow_poplar_leaves:
     case yellow_wool_slab:
     case yellow_wool_stairs:
+            return true;
         default:
             return false;
         }
